@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Map-Embed</title>
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <input id="searchBox" type="text" placeholder="Search Location">
+    <input id="locationData" type="text" readonly placeholder="Selected location locationData"
+
+    <script>
+        function initMap() {
+            ver map = new google.maps.Map(document..getElementById('map'), {
+                center: {lat: 6.185, lng: 116.227},
+                zoom: 15
+            });
+            
+            var input = document.getElementById('searchBox');
+            var searchBox = new google.maps.places.SearchBox(input);
+            map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+            var markers = [];
+
+            searchBox.addListener('places_changed', function () {
+                var places = searchBox.getPlaces();
+
+                if (places.length == 0) {
+                    return;
+                }
+
+                markers.forEach(funtion (marker) {
+                    marker.setMap(null)
+                });
+                markers = [];
+
+                var bounds = new google.maps.LatLngBounds();
+                places.forEach(function (places) {
+                    if (!place.geometry) {
+                        return;
+                    }
+                    
+                    var marker = new google.maps.Marker({
+                        map:map,
+                        title: place.name,
+                        position: place.geometry.location,
+                    });
+
+                    marker.addListener('click', function () {
+                        document.getElementById('locationData').value = `Name: ${place.name}, Lat: ${place.geometry.location.lat()}, Lng: ${place.geometry.location.lng()}`;
+                    });
+
+                    markers.push(marker);
+
+                    if (place.geometry.viewport) {
+                        bounds.union(place.geometry.viewport);
+                    } else {
+                        bounds.extend(place.geometry.location);
+                    }
+                  });
+                  map.fitBounds(bounds);
+                });
+
+                map.addListener('click', function (event) {
+                    markers.forEach(function (marker) {
+                        marker.setMap(null);
+                      });
+                      markers = [];
+
+                      var marker = new google.maps.Marker({
+                        position: event.latLng,
+                        map: map,
+                      });
+
+                      marker.addListener('click', function () {
+                        document.getElementById('locationData').value = `Lat: ${event.latLng.lat()}, Lng: ${event.latLng.lng()}`;
+                      });
+
+                      markers.push(marker);
+
+                      document.getElementById('locationData').value = `Lat: ${event.latLng.lat()}, Lng: ${eventlatLng.lng()}`;
+                    });
+                }
+              </script>
+              <script src="https://maps.googleapis.com/maps/api/js?key=API_KEY&libraries=places&callback=initMap" async defer></script>
+            </body>    
+</html>
